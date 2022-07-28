@@ -24,4 +24,9 @@ public class ApiController {
     public ResponseEntity<ErrorResponse> startIndexing() {
         return new ResponseEntity<>(indexSystemService.startIndexing(), HttpStatus.OK);
     }
+
+    @GetMapping("/stopIndexing")
+    public ResponseEntity<ErrorResponse> stopIndexing() {
+        return new ResponseEntity<>(indexSystemService.stopIndexing(), HttpStatus.OK);
+    }
 }

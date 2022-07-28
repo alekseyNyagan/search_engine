@@ -12,6 +12,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.RecursiveAction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,7 +47,7 @@ public class GrabberTask extends RecursiveAction {
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
-        }
+        } catch (CancellationException ignored) {}
     }
 
     private Set<String> getChildren(String mainUrl) throws IOException {

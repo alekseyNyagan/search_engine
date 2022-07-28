@@ -46,7 +46,7 @@ public class IndexSystemServiceImpl implements IndexSystemService{
         List<Map<String, String>> sitesProperties = applicationProperties.getSites();
         int cores = Runtime.getRuntime().availableProcessors();
 
-        if (isCanIndexing()) {
+        if (!isIndexing()) {
             pools.clear();
             sitesProperties.forEach(property -> {
                 String url = property.get("url");
@@ -77,6 +77,18 @@ public class IndexSystemServiceImpl implements IndexSystemService{
         return errorResponse;
     }
 
+    @Override
+    public ErrorResponse stopIndexing() {
+        ErrorResponse errorResponse = new ErrorResponse();
+        if (isIndexing()) {
+            pools.forEach(ForkJoinPool::shutdownNow);
+            errorResponse.setResult(true);
+        } else {
+            errorResponse.setError("Индексация не запущена");
+        }
+        return errorResponse;
+    }
+
     private ForkJoinPool addSite(String url, Site site, int workers) {
         ForkJoinPool forkJoinPool = new ForkJoinPool(workers);
         new Thread(() -> {
@@ -93,7 +105,10 @@ public class IndexSystemServiceImpl implements IndexSystemService{
         return forkJoinPool;
     }
 
-    private boolean isCanIndexing() {
-        return pools.stream().allMatch(ForkJoinPool::isTerminated);
+    private boolean isIndexing() {
+        if (pools.isEmpty()) {
+            return false;
+        }
+        return pools.stream().noneMatch(ForkJoinPool::isTerminated);
     }
 }
