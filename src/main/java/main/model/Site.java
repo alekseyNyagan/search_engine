@@ -7,13 +7,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "site")
-public class Site {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull
-    @Column(name = "id")
-    private int id;
+public class Site extends AbstractEntity {
 
     @Enumerated(value = EnumType.STRING)
     @NotNull
@@ -50,14 +44,6 @@ public class Site {
         this.lastError = lastError;
         this.url = url;
         this.name = name;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public Status getStatus() {

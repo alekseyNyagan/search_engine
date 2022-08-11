@@ -1,16 +1,14 @@
 package main.controller;
 
 import main.api.response.ErrorResponse;
+import main.api.response.StatisticResponse;
 import main.service.IndexSystemServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
 public class ApiController {
 
     private final IndexSystemServiceImpl indexSystemService;
@@ -28,5 +26,15 @@ public class ApiController {
     @GetMapping("/stopIndexing")
     public ResponseEntity<ErrorResponse> stopIndexing() {
         return new ResponseEntity<>(indexSystemService.stopIndexing(), HttpStatus.OK);
+    }
+
+    @PostMapping ("/indexPage")
+    public ResponseEntity<ErrorResponse> indexPage(@RequestParam String url) {
+        return new  ResponseEntity<>(indexSystemService.indexPage(url), HttpStatus.OK);
+    }
+
+    @GetMapping("/statistics")
+    public ResponseEntity<StatisticResponse> getStatistics() {
+        return new ResponseEntity<>(indexSystemService.getStatistics(), HttpStatus.OK);
     }
 }

@@ -65,7 +65,7 @@ public class GrabberTask extends RecursiveAction {
         return linksSet;
     }
 
-    private void parseDoc(String url) {
+    public void parseDoc(String url) {
         try {
             Response response = htmlStorage.getResponse(url);
             Page page = (response != null) ?

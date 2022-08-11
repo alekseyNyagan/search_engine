@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface SiteRepository extends JpaRepository<Site, Integer> {
     public Optional<Site> findSiteByName(String name);
+
+    public Optional<Site> findSiteByUrl(String url);
 }
