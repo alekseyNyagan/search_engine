@@ -34,4 +34,21 @@ public class Lemmatizator {
         }
         return lemmas;
     }
+
+    public Set<String> getQueryLemmas(String query) {
+        Set<String> lemmas = new HashSet<>();
+        String[] words = query
+                .replaceAll(HTML_TAG_REGEX, "")
+                .toLowerCase()
+                .replaceAll("[^А-Яа-я\\s]", "")
+                .split("\\s+");
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                if (!morphology.getMorphInfo(word).get(0).matches("(.*)(СОЮЗ|ПРЕДЛ|МЕЖД|ЧАСТ)(.*)")) {
+                    lemmas.add(word);
+                }
+            }
+        }
+        return lemmas;
+    }
 }

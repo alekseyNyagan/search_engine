@@ -1,6 +1,8 @@
 package main.repository;
 
+import main.model.Lemma;
 import main.model.Page;
+import main.model.Site;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -23,4 +25,7 @@ public interface PageRepository extends JpaRepository<Page, Integer> {
     public void delete(Page page);
 
     public Optional<Page> findPageByPath(String url);
+
+    @Query(value = "SELECT p FROM Index i JOIN i.page p JOIN i.lemma l WHERE l = ?1 AND l.site = ?2")
+    public List<Page> getPagesByLemma(Lemma lemma, Site site);
 }
