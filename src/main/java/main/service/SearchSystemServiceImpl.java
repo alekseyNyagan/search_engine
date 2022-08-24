@@ -51,10 +51,10 @@ public class SearchSystemServiceImpl implements SearchSystemService {
 
     private List<PageDTO> buildPageDTOSet(Map<Page, Float> relativeRelevance, List<Page> pages, StringBuilder snippetString, int offset, int limit) {
         List<PageDTO> pageDTOs = new ArrayList<>();
-        int pageNumber = offset / RESULTS_ON_PAGE;
+        int pageNumber = offset / RESULTS_ON_PAGE + 1;
 
         Pattern snippetRegex = Pattern.compile("(\\w+)\\W+" + snippetString + "\\W+(\\w+)");
-        for (int i = offset; i <= (pageNumber + 1) * limit; i++) {
+        for (int i = offset; i < (Math.min(pageNumber * limit, pages.size())); i++) {
             Page page = pages.get(i);
             String title = Jsoup.parse(page.getContent()).title();
             Matcher snippetMatcher = snippetRegex.matcher(page.getContent().replaceAll("\\<.*?\\>", " "));

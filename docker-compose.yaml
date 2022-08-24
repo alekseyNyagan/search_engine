@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  app:
+    image: searchengine:v1
+    build:
+      context: .
+    container_name: app
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      - MYSQL_DB_HOST=jdbc:mysql
+      - MYSQL_DB_PORT=//db:3306
+      - MYSQL_SCHEMA_NAME=search_engine
+      - MYSQL_USERNAME=root
+      - MYSQL_USER_PASSWORD=testtest
+
+  db:
+    image: mysql:8.0.25
+    container_name: db
+    environment:
+      - MYSQL_ROOT_PASSWORD=testtest
+      - MYSQL_DATABASE=search_engine
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      retries: 10
+      timeout: 5s
