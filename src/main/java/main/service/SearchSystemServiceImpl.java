@@ -1,5 +1,7 @@
 package main.service;
 
+import main.api.response.AbstractResponse;
+import main.api.response.ErrorResponse;
 import main.api.response.SearchResponse;
 import main.dto.PageDTO;
 import main.lemmatizator.Lemmatizator;
@@ -32,21 +34,25 @@ public class SearchSystemServiceImpl implements SearchSystemService {
     }
 
     @Override
-    public SearchResponse search(String query, String site, int offset, int limit) throws IOException {
-        SearchResponse searchResponse = new SearchResponse();
-        Lemmatizator lemmatizator = new Lemmatizator();
-        StringBuilder snippetString = new StringBuilder();
-        Set<String> lemmas = lemmatizator.getQueryLemmas(query);
-        TreeSet<Lemma> lemmaList = new TreeSet<>(Comparator.comparingInt(Lemma::getFrequency));
-        lemmaList.addAll(site == null ? lemmaRepository.findAllByLemmas(lemmas) : lemmaRepository.findAllByLemmasAndSite(lemmas, site));
-        List<Page> pages = getPages(lemmaList, snippetString);
-        Map<Page, Float> relativeRelevance = getRelevance(pages, lemmaList);
-        List<PageDTO> dtos = buildPageDTOSet(relativeRelevance, pages, snippetString, offset, limit);
+    public AbstractResponse search(String query, String site, int offset, int limit) throws IOException {
+        if (query.isEmpty()) {
+            return new ErrorResponse(false, "Задан пустой поисковый запрос");
+        } else {
+            SearchResponse searchResponse = new SearchResponse();
+            Lemmatizator lemmatizator = new Lemmatizator();
+            StringBuilder snippetString = new StringBuilder();
+            Set<String> lemmas = lemmatizator.getQueryLemmas(query);
+            TreeSet<Lemma> lemmaList = new TreeSet<>(Comparator.comparingInt(Lemma::getFrequency));
+            lemmaList.addAll(site == null ? lemmaRepository.findAllByLemmas(lemmas) : lemmaRepository.findAllByLemmasAndSite(lemmas, site));
+            List<Page> pages = getPages(lemmaList, snippetString);
+            Map<Page, Float> relativeRelevance = getRelevance(pages, lemmaList);
+            List<PageDTO> dtos = buildPageDTOSet(relativeRelevance, pages, snippetString, offset, limit);
 
-        searchResponse.setResult(true);
-        searchResponse.setCount(pages.size());
-        searchResponse.setData(dtos);
-        return searchResponse;
+            searchResponse.setResult(true);
+            searchResponse.setCount(pages.size());
+            searchResponse.setData(dtos);
+            return searchResponse;
+        }
     }
 
     private List<PageDTO> buildPageDTOSet(Map<Page, Float> relativeRelevance, List<Page> pages, StringBuilder snippetString, int offset, int limit) {

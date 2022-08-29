@@ -1,10 +1,10 @@
 package main.service;
 
-import main.api.response.SearchResponse;
+import main.api.response.AbstractResponse;
 
 import java.io.IOException;
 
 public interface SearchSystemService {
 
-    public SearchResponse search(String query, String site, int offset, int limit) throws IOException;
+    public AbstractResponse search(String query, String site, int offset, int limit) throws IOException;
 }

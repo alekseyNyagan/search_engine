@@ -1,7 +1,7 @@
 package main.controller;
 
+import main.api.response.AbstractResponse;
 import main.api.response.ErrorResponse;
-import main.api.response.SearchResponse;
 import main.api.response.StatisticResponse;
 import main.service.IndexSystemServiceImpl;
 import main.service.SearchSystemService;
@@ -45,8 +45,8 @@ public class ApiController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<SearchResponse> search(@RequestParam String query, @RequestParam(required = false) String site, @RequestParam int offset,
-                                                 @RequestParam int limit) throws IOException {
+    public ResponseEntity<AbstractResponse> search(@RequestParam String query, @RequestParam(required = false) String site, @RequestParam int offset,
+                                                   @RequestParam int limit) throws IOException {
         return new  ResponseEntity<>(searchSystemService.search(query, site, offset, limit), HttpStatus.OK);
     }
 }

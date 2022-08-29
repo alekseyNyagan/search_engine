@@ -4,21 +4,11 @@ import main.dto.PageDTO;
 
 import java.util.List;
 
-public class SearchResponse {
-
-    private boolean result;
+public class SearchResponse extends AbstractResponse {
 
     private int count;
 
     private List<PageDTO> data;
-
-    public boolean isResult() {
-        return result;
-    }
-
-    public void setResult(boolean result) {
-        this.result = result;
-    }
 
     public int getCount() {
         return count;

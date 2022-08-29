@@ -3,24 +3,15 @@ package main.api.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ErrorResponse {
-    private boolean result;
+public class ErrorResponse extends AbstractResponse {
     private String error;
 
     public ErrorResponse() {
     }
 
     public ErrorResponse(boolean result, String error) {
-        this.result = result;
+        super(result);
         this.error = error;
-    }
-
-    public boolean getResult() {
-        return result;
-    }
-
-    public void setResult(boolean result) {
-        this.result = result;
     }
 
     public String getError() {
