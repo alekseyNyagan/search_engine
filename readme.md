@@ -16,13 +16,17 @@ In the `settings.xml` file located in `/home/<your username>/.m2` inside tag `se
             <httpHeaders>
                 <property>
                     <name>Authorization</name>
-                    <value>Bearer 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</value>
+                    <value>Token</value>
                 </property>
             </httpHeaders>
         </configuration>
     </server>
 </servers>
 ```
+>Actual token, the string to be inserted into the tag `<value>...</value>`
+[located in the document at the link](https://docs.google.com/document/d/1QVejAfHndY_6oSVGb3KwpU6C28C4RpStrZLHFxAlH2c/edit?usp=sharing).
+
+
 If you have no `settings.xml` then create it and add 
 ```xml
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
@@ -37,7 +41,7 @@ If you have no `settings.xml` then create it and add
                 <httpHeaders>
                     <property>
                         <name>Authorization</name>
-                        <value>Bearer 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</value>
+                        <value>Token</value>
                     </property>
                 </httpHeaders>
             </configuration>
