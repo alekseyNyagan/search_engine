@@ -66,7 +66,7 @@ public class IndexSystemServiceImpl implements IndexSystemService{
                     site = optionalSite.get();
                     List<Page> pages = site.getPage();
                     pages.forEach(page -> {
-                        List<Integer> lemmasIds = pageRepository.lemmasIds(page.getId());
+                        List<Integer> lemmasIds = pageRepository.lemmasIds(page);
                         indexRepository.deleteAllByPage(page);
                         lemmaRepository.deleteLemmasByIds(lemmasIds);
                         pageRepository.delete(page);
@@ -110,7 +110,7 @@ public class IndexSystemServiceImpl implements IndexSystemService{
 
             if (pageByPath.isPresent()) {
                 Page page = pageByPath.get();
-                List<Integer> lemmasIds = pageRepository.lemmasIds(page.getId());
+                List<Integer> lemmasIds = pageRepository.lemmasIds(page);
                 indexRepository.deleteAllByPage(page);
                 lemmaRepository.deleteLemmasByIds(lemmasIds);
                 pageRepository.delete(page);

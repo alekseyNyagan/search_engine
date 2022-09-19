@@ -16,9 +16,9 @@ import java.util.Optional;
 @Repository
 public interface PageRepository extends JpaRepository<Page, Integer> {
 
-    @Query(nativeQuery = true, value = "SELECT `index`.lemma_id FROM `index` JOIN lemma l on `index`.lemma_id = l.id JOIN `index` i on l.id = i.lemma_id " +
-            "WHERE i.page_id = :pageId GROUP BY `index`.lemma_id HAVING COUNT(`index`.page_id) = 1")
-    public List<Integer> lemmasIds(@Param("pageId") int pageId);
+    @Query("SELECT i.lemma.id FROM Index i JOIN Lemma l on i.lemma = l " +
+            "WHERE i.page = :page GROUP BY i.lemma.id HAVING COUNT(i.page) = 1")
+    public List<Integer> lemmasIds(@Param("page") Page page);
 
     @Transactional
     @Modifying(clearAutomatically = true, flushAutomatically = true)

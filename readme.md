@@ -3,7 +3,7 @@
 
 ## Description
 
-SearchEngine implemented by scratch on Spring Boot, Mysql, Liquibase, Docker and Docker-compose. The main features of the search engine are indexing sites, individual pages and searching through them.
+SearchEngine implemented by scratch on Spring Boot, PostgreSQL, Liquibase, Docker and Docker-compose. The main features of the search engine are indexing sites, individual pages and searching through them.
 
 ## Project setup
 

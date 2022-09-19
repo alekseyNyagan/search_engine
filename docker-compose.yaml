@@ -12,19 +12,20 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - MYSQL_DB_HOST=jdbc:mysql
-      - MYSQL_DB_PORT=//db:3306
-      - MYSQL_SCHEMA_NAME=search_engine
-      - MYSQL_USERNAME=root
-      - MYSQL_USER_PASSWORD=testtest
+      - DB_HOST=jdbc:postgresql
+      - DB_PORT=//db:5432
+      - SCHEMA_NAME=search_engine
+      - DB_USERNAME=postgres
+      - DB_USER_PASSWORD=testtest
 
   db:
-    image: mysql:8.0.25
+    image: postgres:14.5-alpine
     container_name: db
     environment:
-      - MYSQL_ROOT_PASSWORD=testtest
-      - MYSQL_DATABASE=search_engine
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=testtest
+      - POSTGRES_DB=search_engine
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      test: ["CMD-SHELL", "pg_isready -d search_engine -U postgres"]
       retries: 10
       timeout: 5s

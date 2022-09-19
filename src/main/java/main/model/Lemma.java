@@ -10,7 +10,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "lemma")
-@SQLInsert(sql = "INSERT INTO lemma (frequency, lemma, site_id) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE frequency = frequency + 1")
+@SQLInsert(sql = "INSERT INTO lemma (frequency, lemma, site_id) VALUES (?, ?, ?) ON CONFLICT ON CONSTRAINT lemma_site " +
+        "DO UPDATE SET frequency = lemma.frequency + 1")
 public class Lemma {
 
     @Id

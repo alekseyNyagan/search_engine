@@ -72,9 +72,6 @@
             <column autoIncrement="true" name="id" type="INT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="status" type="ENUM('FAILED', 'INDEXED', 'INDEXING')">
-                <constraints nullable="false"/>
-            </column>
             <column name="status_time" type="datetime">
                 <constraints nullable="false"/>
             </column>
@@ -126,5 +123,13 @@
     </changeSet>
     <changeSet author="aleksey (generated)" id="1661233675917-15">
         <addForeignKeyConstraint baseColumnNames="site_id" baseTableName="page" constraintName="page_site_fk" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="site" validate="true"/>
+    </changeSet>
+    <changeSet id="1661233675917-16" author="aleksey">
+        <sql>CREATE TYPE my_status AS ENUM ('FAILED', 'INDEXED', 'INDEXING')</sql>
+        <addColumn tableName="site">
+            <column name="status" type="my_status">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
     </changeSet>
 </databaseChangeLog>

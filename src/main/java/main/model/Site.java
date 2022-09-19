@@ -1,5 +1,9 @@
 package main.model;
 
+import main.enumType.PostgreSQLEnumType;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -7,11 +11,16 @@ import java.util.List;
 
 @Entity
 @Table(name = "site")
+@TypeDef(
+        name = "pgsql_enum",
+        typeClass = PostgreSQLEnumType.class
+)
 public class Site extends AbstractEntity {
 
     @Enumerated(value = EnumType.STRING)
     @NotNull
     @Column(name = "status")
+    @Type(type = "pgsql_enum")
     private Status status;
 
     @Column(name = "status_time")

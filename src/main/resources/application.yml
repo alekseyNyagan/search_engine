@@ -1,8 +1,8 @@
-spring.datasource.url: ${MYSQL_DB_HOST}:${MYSQL_DB_PORT}/${MYSQL_SCHEMA_NAME}
-spring.datasource.username: ${MYSQL_USERNAME}
-spring.datasource.password: ${MYSQL_USER_PASSWORD}
+spring.datasource.url: ${DB_HOST}:${DB_PORT}/${SCHEMA_NAME}
+spring.datasource.username: ${DB_USERNAME}
+spring.datasource.password: ${DB_USER_PASSWORD}
 spring.jpa.hibernate.ddl-auto: none
-spring.jpa.properties.hibernate.dialect: org.hibernate.dialect.MySQL8Dialect
+spring.jpa.properties.hibernate.dialect: org.hibernate.dialect.PostgreSQL95Dialect
 spring.jpa.properties.hibernate.jdbc.batch_size: 100
 spring.jpa.properties.hibernate.order_inserts: true
 spring.liquibase.change-log: classpath:/db/changelog/db.changelog-master.xml
