@@ -42,11 +42,11 @@ public class SearchSystemServiceImpl implements SearchSystemService {
             Lemmatizator lemmatizator = new Lemmatizator();
             StringBuilder snippetString = new StringBuilder();
             Set<String> lemmas = lemmatizator.getQueryLemmas(query);
-            TreeSet<Lemma> lemmaList = new TreeSet<>(Comparator.comparingInt(Lemma::getFrequency));
-            lemmaList.addAll(site == null ? lemmaRepository.findAllByLemmas(lemmas) : lemmaRepository.findAllByLemmasAndSite(lemmas, site));
-            List<Page> pages = getPages(lemmaList, snippetString);
-            Map<Page, Float> relativeRelevance = getRelevance(pages, lemmaList);
-            List<PageDTO> dtos = buildPageDTOSet(relativeRelevance, pages, snippetString, offset, limit);
+            TreeSet<Lemma> lemmaSet = new TreeSet<>(Comparator.comparingInt(Lemma::getFrequency));
+            lemmaSet.addAll(site == null ? lemmaRepository.findAllByLemmas(lemmas) : lemmaRepository.findAllByLemmasAndSite(lemmas, site));
+            List<Page> pages = getPages(new TreeSet<>(lemmaSet), snippetString);
+            Map<Page, Float> relativeRelevance = getRelevance(pages, lemmaSet);
+            List<PageDTO> dtos = buildPageDTOList(relativeRelevance, pages, snippetString, offset, limit);
 
             searchResponse.setResult(true);
             searchResponse.setCount(pages.size());
@@ -55,7 +55,7 @@ public class SearchSystemServiceImpl implements SearchSystemService {
         }
     }
 
-    private List<PageDTO> buildPageDTOSet(Map<Page, Float> relativeRelevance, List<Page> pages, StringBuilder snippetString, int offset, int limit) {
+    private List<PageDTO> buildPageDTOList(Map<Page, Float> relativeRelevance, List<Page> pages, StringBuilder snippetString, int offset, int limit) {
         List<PageDTO> pageDTOs = new ArrayList<>();
         int pageNumber = offset / RESULTS_ON_PAGE + 1;
 
@@ -108,26 +108,31 @@ public class SearchSystemServiceImpl implements SearchSystemService {
         return relativeRelevance;
     }
 
-    private List<Page> getPages(TreeSet<Lemma> lemmaList, StringBuilder snippetString) {
-        List<Page> allPages = new ArrayList<>();
-        List<Page> pagesByLemma = new ArrayList<>();
-        for (Lemma lemma : lemmaList) {
-            String lemmaName = lemma.getLemma();
-            snippetString.append(snippetString.length() == 0 ? "" : "|").append(lemma.getLemma());
-            if (allPages.isEmpty()) {
-                pagesByLemma = pageRepository.getPagesByLemma(lemma, lemma.getSite());
-                allPages.addAll(pagesByLemma);
-            } else {
-                List<Page> tempList = new ArrayList<>();
-                for (Page page : pagesByLemma) {
-                    if (page.getLemmas().stream().map(Lemma::getLemma).anyMatch(s -> s.equals(lemmaName)) && !allPages.contains(page)) {
-                        tempList.add(page);
-                    }
-                }
-                allPages.addAll(tempList);
-                pagesByLemma.retainAll(tempList);
-            }
+    private List<Page> getPages(TreeSet<Lemma> lemmaSet, StringBuilder snippetString) {
+        List<Page> pages;
+        Lemma fitstLemma = lemmaSet.pollFirst();
+        if (fitstLemma != null) {
+            snippetString.append(snippetString.length() == 0 ? "" : "|").append(fitstLemma.getLemma());
+            pages = pageRepository.getPagesByLemma(fitstLemma, fitstLemma.getSite());
+            pages.retainAll(searchPagesByNextLemma(pages, lemmaSet, snippetString));
+        } else {
+            pages = Collections.emptyList();
         }
-        return allPages;
+        return pages;
+    }
+
+    private List<Page> searchPagesByNextLemma(List<Page> pages, TreeSet<Lemma> lemmaSet, StringBuilder snippetString) {
+        Lemma lemma = lemmaSet.pollFirst();
+        if (lemma != null) {
+            snippetString.append("|").append(lemma.getLemma());
+            List<Page> tempList = new ArrayList<>();
+            for (Page page : pages) {
+                if (page.getLemmas().stream().map(Lemma::getLemma).anyMatch(s -> s.equals(lemma.getLemma()))) {
+                    tempList.add(page);
+                }
+            }
+            searchPagesByNextLemma(tempList, lemmaSet, snippetString);
+        }
+        return pages;
     }
 }
