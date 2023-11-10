@@ -9,6 +9,7 @@ import main.repository.LemmaRepository;
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.safety.Safelist;
 
 import java.io.IOException;
 import java.util.*;
@@ -44,7 +45,7 @@ public class HTMLStorage {
         Map<String, Float> rankMap = new HashMap<>();
         Set<Index> indexSet = new HashSet<>();
         for (Field field : fields) {
-            String text = Jsoup.parse(htmlDoc).selectFirst(field.getSelector()).text();
+            String text = Jsoup.clean(Jsoup.parse(htmlDoc).selectFirst(field.getSelector()).text(), Safelist.basic());
             Map<String, Integer> lemmasMap = lemmatizator.getLemmas(text);
 
             for (String lemma : lemmasMap.keySet()) {
