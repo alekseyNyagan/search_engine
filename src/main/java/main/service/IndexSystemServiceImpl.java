@@ -131,18 +131,13 @@ public class IndexSystemServiceImpl implements IndexSystemService{
     @Override
     public StatisticResponse getStatistics() {
         StatisticResponse statisticResponse = new StatisticResponse();
-        StatisticDTO statisticDTO = new StatisticDTO();
-        TotalStatisticDTO totalStatisticDTO = new TotalStatisticDTO();
         List<Site> sites = siteRepository.findAll();
         List<SiteStatisticDTO> statisticDTOS = sites.stream().map(siteStatisticsMapper::toDTO).collect(Collectors.toList());
-
-        totalStatisticDTO.setSites(sites.size());
-        totalStatisticDTO.setPages(statisticDTOS.stream().mapToInt(SiteStatisticDTO::getPages).sum());
-        totalStatisticDTO.setLemmas(statisticDTOS.stream().mapToInt(SiteStatisticDTO::getLemmas).sum());
-        totalStatisticDTO.setIndexing(isIndexing());
-
-        statisticDTO.setDetailed(statisticDTOS);
-        statisticDTO.setTotal(totalStatisticDTO);
+        TotalStatisticDTO totalStatisticDTO = new TotalStatisticDTO(sites.size()
+                , statisticDTOS.stream().mapToInt(SiteStatisticDTO::getPages).sum()
+                , statisticDTOS.stream().mapToInt(SiteStatisticDTO::getLemmas).sum()
+                , isIndexing());
+        StatisticDTO statisticDTO = new StatisticDTO(totalStatisticDTO, statisticDTOS);
 
         statisticResponse.setResult(true);
         statisticResponse.setStatistics(statisticDTO);

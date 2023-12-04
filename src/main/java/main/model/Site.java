@@ -1,26 +1,22 @@
 package main.model;
 
-import main.enumType.PostgreSQLEnumType;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.JdbcTypeCode;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import org.hibernate.type.SqlTypes;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "site")
-@TypeDef(
-        name = "pgsql_enum",
-        typeClass = PostgreSQLEnumType.class
-)
 public class Site extends AbstractEntity {
 
     @Enumerated(value = EnumType.STRING)
     @NotNull
     @Column(name = "status")
-    @Type(type = "pgsql_enum")
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     private Status status;
 
     @Column(name = "status_time")

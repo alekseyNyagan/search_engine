@@ -80,19 +80,12 @@ public class SearchSystemServiceImpl implements SearchSystemService {
                     , snippet
                     , relativeRelevance.get(page)));
         }
-        pageDTOs.sort(Comparator.comparingDouble(PageDTO::getRelevance).reversed());
+        pageDTOs.sort(Comparator.comparingDouble(PageDTO::relevance).reversed());
         return pageDTOs;
     }
 
     private String getSnippet(List<String> lemmas, String content) {
-        StringBuilder wordsToBold = new StringBuilder();
         StringBuilder snippet = new StringBuilder();
-
-        for (String lemma : lemmas) {
-            wordsToBold
-                    .append(wordsToBold.length() == 0 ? "" : "|")
-                    .append(lemma);
-        }
         String lemma = lemmas.get(0);
         int wordIndex = 0;
         String[] contentArray = content.split(" ");
@@ -112,7 +105,7 @@ public class SearchSystemServiceImpl implements SearchSystemService {
         for (String word : snippetSubstring.split(" ")) {
             try {
                 snippet
-                        .append(snippet.length() == 0 ? "" : " ")
+                        .append(snippet.isEmpty() ? "" : " ")
                         .append(lemmas.contains(lemmatizator.getWordNormalForm(word)) ? "<b>" + word + "</b>" : word);
             } catch (WrongCharaterException exception) {
                 LOGGER.warn(exception.getMessage());
