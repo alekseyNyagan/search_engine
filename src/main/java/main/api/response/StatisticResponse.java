@@ -1,20 +1,13 @@
 package main.api.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import main.dto.StatisticDTO;
 
-public class StatisticResponse {
+@Schema(description = "Сущность ответа сервера со статистикой")
+public class StatisticResponse extends AbstractResponse {
 
-    private boolean result;
-
+    @Schema(description = "Статистика по поисковой системе")
     private StatisticDTO statistics;
-
-    public boolean isResult() {
-        return result;
-    }
-
-    public void setResult(boolean result) {
-        this.result = result;
-    }
 
     public StatisticDTO getStatistics() {
         return statistics;
