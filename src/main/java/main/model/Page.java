@@ -2,8 +2,21 @@ package main.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.util.List;
 
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode
+@ToString
 @Entity
 @Table(name = "page")
 public class Page {
@@ -26,6 +39,7 @@ public class Page {
     private String content;
 
     @OneToMany(mappedBy = "page")
+    @ToString.Exclude
     private List<Index> index;
 
     @ManyToMany
@@ -34,15 +48,14 @@ public class Page {
             , joinColumns = @JoinColumn(name = "page_id")
             , inverseJoinColumns = @JoinColumn(name = "lemma_id")
     )
+    @ToString.Exclude
     private List<Lemma> lemmas;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "site_id")
+    @ToString.Exclude
     private Site site;
-
-    public Page() {
-    }
 
     public Page(String path, int code, String content, Site site) {
         this.path = path;
@@ -51,59 +64,4 @@ public class Page {
         this.site = site;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public List<Lemma> getLemmas() {
-        return lemmas;
-    }
-
-    public void setLemmas(List<Lemma> lemmas) {
-        this.lemmas = lemmas;
-    }
-
-    public List<Index> getIndex() {
-        return index;
-    }
-
-    public void setIndex(List<Index> index) {
-        this.index = index;
-    }
-
-    public Site getSite() {
-        return site;
-    }
-
-    public void setSite(Site site) {
-        this.site = site;
-    }
 }

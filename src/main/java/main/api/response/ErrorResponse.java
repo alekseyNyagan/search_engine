@@ -2,7 +2,11 @@ package main.api.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "Сущность ответа сервера при ошибке")
 public class ErrorResponse extends AbstractResponse {
@@ -17,11 +21,4 @@ public class ErrorResponse extends AbstractResponse {
         this.error = error;
     }
 
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
-    }
 }

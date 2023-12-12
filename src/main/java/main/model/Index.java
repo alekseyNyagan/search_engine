@@ -2,7 +2,19 @@ package main.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode
+@ToString
 @Entity
 @Table(name = "`index`")
 public class Index {
@@ -13,23 +25,22 @@ public class Index {
     @Column(name = "id")
     private int id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "page_id")
+    @ToString.Exclude
     private Page page;
 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "lemma_id")
+    @ToString.Exclude
     private Lemma lemma;
 
     @Column(name = "`rank`")
     @NotNull
     private float rank;
-
-    public Index() {
-    }
 
     public Index(Page page, Lemma lemma, float rank) {
         this.page = page;
@@ -37,35 +48,4 @@ public class Index {
         this.rank = rank;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public Page getPage() {
-        return page;
-    }
-
-    public void setPage(Page page) {
-        this.page = page;
-    }
-
-    public Lemma getLemma() {
-        return lemma;
-    }
-
-    public void setLemma(Lemma lemma) {
-        this.lemma = lemma;
-    }
-
-    public float getRank() {
-        return rank;
-    }
-
-    public void setRank(float rank) {
-        this.rank = rank;
-    }
 }
