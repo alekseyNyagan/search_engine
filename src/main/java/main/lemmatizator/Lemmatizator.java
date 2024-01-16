@@ -1,5 +1,7 @@
 package main.lemmatizator;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.lucene.morphology.LuceneMorphology;
 import org.apache.lucene.morphology.WrongCharaterException;
 import org.apache.lucene.morphology.russian.RussianLuceneMorphology;
@@ -7,10 +9,12 @@ import org.apache.lucene.morphology.russian.RussianLuceneMorphology;
 import java.io.IOException;
 import java.util.*;
 
+@Setter
+@Getter
 public class Lemmatizator {
 
-    private static final String HTML_TAG_REGEX = "\\<.*?\\>";
-    private final LuceneMorphology morphology;
+    private static final String HTML_TAG_REGEX = "<.*?>";
+    private LuceneMorphology morphology;
 
     public Lemmatizator() throws IOException {
         morphology = new RussianLuceneMorphology();
@@ -18,15 +22,11 @@ public class Lemmatizator {
 
     public Map<String, Integer> getLemmas(String field) {
         Map<String, Integer> lemmas = new HashMap<>();
-        String[] words = field
-                .replaceAll(HTML_TAG_REGEX, "")
-                .toLowerCase()
-                .replaceAll("[^А-Яа-я\\s]", "")
-                .split("\\s+");
+        String[] words = getCleanWords(field);
         for (String word : words) {
             if (!word.isEmpty()) {
-                if (!morphology.getMorphInfo(word).get(0).matches("(.*)(СОЮЗ|ПРЕДЛ|МЕЖД|ЧАСТ)(.*)")) {
-                    String normalFormWord = morphology.getNormalForms(word).get(0);
+                if (!isInvalidMorphInfo(word)) {
+                    String normalFormWord = getWordNormalForm(word);
                     int count = lemmas.getOrDefault(normalFormWord, 0);
 
                     lemmas.put(normalFormWord, ++count);
@@ -38,14 +38,10 @@ public class Lemmatizator {
 
     public Set<String> getQueryLemmas(String query) {
         Set<String> lemmas = new HashSet<>();
-        String[] words = query
-                .replaceAll(HTML_TAG_REGEX, "")
-                .toLowerCase()
-                .replaceAll("[^А-Яа-я\\s]", "")
-                .split("\\s+");
+        String[] words = getCleanWords(query);
         for (String word : words) {
             if (!word.isEmpty()) {
-                if (!morphology.getMorphInfo(word).get(0).matches("(.*)(СОЮЗ|ПРЕДЛ|МЕЖД|ЧАСТ)(.*)")) {
+                if (!isInvalidMorphInfo(word)) {
                     lemmas.add(word);
                 }
             }
@@ -53,7 +49,19 @@ public class Lemmatizator {
         return lemmas;
     }
 
-    public String getWordNormalForm (String word) throws WrongCharaterException {
+    public String getWordNormalForm(String word) throws WrongCharaterException {
         return morphology.getNormalForms(word).get(0);
+    }
+
+    private String[] getCleanWords(String text) {
+        return text
+                .replaceAll(HTML_TAG_REGEX, "")
+                .toLowerCase()
+                .replaceAll("[^А-Яа-я\\s]", "")
+                .split("\\s+");
+    }
+
+    private boolean isInvalidMorphInfo(String word) {
+        return morphology.getMorphInfo(word).get(0).matches("(.*)(СОЮЗ|ПРЕДЛ|МЕЖД|ЧАСТ)(.*)");
     }
 }
