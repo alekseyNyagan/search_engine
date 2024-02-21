@@ -20,12 +20,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 
 @Service
 public class IndexSystemServiceImpl implements IndexSystemService{
 
+    private final int cores;
     private final Set<ForkJoinPool> pools;
     private final ApplicationProperties applicationProperties;
     private final SiteRepository siteRepository;
@@ -34,6 +37,8 @@ public class IndexSystemServiceImpl implements IndexSystemService{
     private final IndexRepository indexRepository;
     private final LemmaRepository lemmaRepository;
     private final SiteStatisticsMapper siteStatisticsMapper;
+    private final ExecutorService threadPools;
+
 
     @Autowired
     public IndexSystemServiceImpl(ApplicationProperties sitesConfig, SiteRepository siteRepository, PageRepository pageRepository,
@@ -46,14 +51,15 @@ public class IndexSystemServiceImpl implements IndexSystemService{
         this.indexRepository = indexRepository;
         this.lemmaRepository = lemmaRepository;
         this.siteStatisticsMapper = siteStatisticsMapper;
+        cores = Runtime.getRuntime().availableProcessors();
         pools = new HashSet<>();
+        threadPools = Executors.newFixedThreadPool(cores + 1);
     }
 
     @Transactional
     public ErrorResponse startIndexing() {
         ErrorResponse errorResponse = new ErrorResponse();
         List<Map<String, String>> sitesProperties = applicationProperties.getSites();
-        int cores = Runtime.getRuntime().availableProcessors();
 
         if (!isIndexing()) {
             pools.clear();
@@ -65,12 +71,7 @@ public class IndexSystemServiceImpl implements IndexSystemService{
                 if (optionalSite.isPresent()) {
                     site = optionalSite.get();
                     List<Page> pages = site.getPage();
-                    pages.forEach(page -> {
-                        List<Integer> lemmasIds = pageRepository.lemmasIds(page);
-                        indexRepository.deleteAllByPage(page);
-                        lemmaRepository.deleteLemmasByIds(lemmasIds);
-                        pageRepository.delete(page);
-                    });
+                    pages.forEach(this::deletePage);
                     site = siteRepository.findSiteByName(name).get();
                     site.setStatus(Status.INDEXING);
                 } else {
@@ -110,10 +111,7 @@ public class IndexSystemServiceImpl implements IndexSystemService{
 
             if (pageByPath.isPresent()) {
                 Page page = pageByPath.get();
-                List<Integer> lemmasIds = pageRepository.lemmasIds(page);
-                indexRepository.deleteAllByPage(page);
-                lemmaRepository.deleteLemmasByIds(lemmasIds);
-                pageRepository.delete(page);
+                deletePage(page);
             }
             try {
                 new GrabberTask(new HTMLStorage(fieldRepository, site, lemmaRepository, indexRepository, applicationProperties),
@@ -146,7 +144,7 @@ public class IndexSystemServiceImpl implements IndexSystemService{
 
     private ForkJoinPool addSite(String url, Site site, int workers) {
         ForkJoinPool forkJoinPool = new ForkJoinPool(workers);
-        new Thread(() -> {
+        threadPools.execute(() -> {
             try {
                 forkJoinPool.invoke(new GrabberTask(new HTMLStorage(fieldRepository, site, lemmaRepository, indexRepository, applicationProperties),
                         url, url + "/", new HashSet<>(Set.of(url + "/")), site, pageRepository, siteRepository));
@@ -156,7 +154,7 @@ public class IndexSystemServiceImpl implements IndexSystemService{
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
         return forkJoinPool;
     }
 
@@ -165,5 +163,12 @@ public class IndexSystemServiceImpl implements IndexSystemService{
             return false;
         }
         return pools.stream().noneMatch(ForkJoinPool::isTerminated);
+    }
+
+    private void deletePage(Page page) {
+        List<Integer> lemmasIds = pageRepository.lemmasIds(page);
+        indexRepository.deleteAllByPage(page);
+        lemmaRepository.deleteLemmasByIds(lemmasIds);
+        pageRepository.delete(page);
     }
 }
