@@ -7,7 +7,7 @@ import main.model.Status;
 
 @Getter
 @Setter
-@Schema(description = "Сущность детализированной статисики сайта")
+@Schema(description = "Сущность детализированной статистики сайта")
 public class SiteStatisticDTO extends AbstractDTO {
 
     @Schema(description = "Url сайта")
