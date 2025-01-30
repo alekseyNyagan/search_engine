@@ -12,11 +12,7 @@ public abstract class AbstractResponse {
     @Schema(description = "Результат ответа")
     private boolean result;
 
-    public AbstractResponse() {
-    }
-
-    public AbstractResponse(boolean result) {
-        this.result = result;
+    protected AbstractResponse() {
     }
 
 }

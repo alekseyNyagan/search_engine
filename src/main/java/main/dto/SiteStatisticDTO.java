@@ -26,9 +26,9 @@ public class SiteStatisticDTO extends AbstractDTO {
     private String error;
 
     @Schema(description = "Количество страниц сайта")
-    private int pages;
+    private long pages;
 
     @Schema(description = "Количество лемм сайта")
-    private int lemmas;
+    private long lemmas;
 
 }

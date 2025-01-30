@@ -12,13 +12,4 @@ import lombok.Setter;
 public class ErrorResponse extends AbstractResponse {
     @Schema(description = "Описание ошибки")
     private String error;
-
-    public ErrorResponse() {
-    }
-
-    public ErrorResponse(boolean result, String error) {
-        super(result);
-        this.error = error;
-    }
-
 }

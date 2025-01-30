@@ -1,25 +1,17 @@
 package main.model;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import org.hibernate.annotations.JdbcTypeCode;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
 @ToString
 @Entity
 @Table(name = "site")
@@ -46,20 +38,9 @@ public class Site extends AbstractEntity {
     @NotNull
     private String name;
 
-    @OneToMany(mappedBy = "site")
-    @ToString.Exclude
-    private List<Page> page;
+    @Column(name = "html_pages_count")
+    private Long htmlPagesCount;
 
-    @OneToMany(mappedBy = "site")
-    @ToString.Exclude
-    private List<Lemma> lemma;
-
-    public Site(Status status, LocalDateTime statusTime, String lastError, String url, String name) {
-        this.status = status;
-        this.statusTime = statusTime;
-        this.lastError = lastError;
-        this.url = url;
-        this.name = name;
-    }
-
+    @Column(name = "lemmas_count")
+    private Long lemmasCount;
 }

@@ -1,13 +1,10 @@
-version: '3.8'
-
 services:
-  app:
-    image: searchengine:v1
+  search_app:
     build:
       context: .
-    container_name: app
+    container_name: search_app
     depends_on:
-      db:
+      search_db:
         condition: service_healthy
       logstash:
         condition: service_healthy
@@ -15,15 +12,16 @@ services:
       - "8080:8080"
     environment:
       - DB_HOST=jdbc:postgresql
-      - DB_PORT=//db:5432
+      - DB_PORT=//search_db:5432
       - SCHEMA_NAME=search_engine
       - DB_USERNAME=postgres
       - DB_USER_PASSWORD=testtest
       - BOOTSTRAP_SERVER=kafka:9092
+      - ELASTICSEARCH_URI=elasticsearch:9200
 
-  db:
+  search_db:
     image: postgres:14.5-alpine
-    container_name: db
+    container_name: search_db
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=testtest
@@ -32,6 +30,8 @@ services:
       test: ["CMD-SHELL", "pg_isready -d search_engine -U postgres"]
       retries: 10
       timeout: 5s
+    ports:
+      - "5432:5432"
 
   elasticsearch:
     build: elk/elasticsearch/
@@ -44,6 +44,8 @@ services:
       - xpack.security.enabled=false
       - discovery.type=single-node
       - network.host=0.0.0.0
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
 
   logstash:
     build: elk/logstash/
@@ -58,7 +60,6 @@ services:
       interval: 60s
       timeout: 50s
       retries: 5
-    restart: on-failure
     depends_on:
       - elasticsearch
 
@@ -91,3 +92,26 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_CREATE_TOPICS: "logs:1:1"
+
+  pgadmin:
+    image: dpage/pgadmin4:8.14.0
+    restart: "no"
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:80/misc/ping || exit -1
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 5
+
+volumes:
+  esdata:
+  pgadmin_data:

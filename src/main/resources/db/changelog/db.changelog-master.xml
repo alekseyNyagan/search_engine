@@ -9,5 +9,6 @@
 
     <include file="db/changelog/liquibase-outputChangeLog-init.xml"/>
     <include file="db/changelog/init-field-table-with-values.xml"/>
+    <include file="db/changelog/custom-postgresql-index-changed-to-elasticsearch-index.xml"/>
 
 </databaseChangeLog>

@@ -8,9 +8,9 @@ import java.util.List;
 
 @Getter
 @Setter
-public class SearchResponse extends AbstractResponse {
+public class AppSearchResponse extends AbstractResponse {
 
-    private int count;
+    private long count;
 
     private List<PageDTO> data;
 

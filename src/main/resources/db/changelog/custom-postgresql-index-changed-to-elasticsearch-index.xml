@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.25.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1737532202157-4" author="aleksey (generated)">
+        <addColumn tableName="site">
+            <column name="html_pages_count" type="BIGINT"/>
+            <column name="lemmas_count" type="BIGINT"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="1737532202157-6" author="aleksey (generated)">
+        <dropForeignKeyConstraint baseTableName="index" constraintName="index_lemma_fk"/>
+    </changeSet>
+    <changeSet id="1737532202157-7" author="aleksey (generated)">
+        <dropForeignKeyConstraint baseTableName="index" constraintName="index_page_fk"/>
+    </changeSet>
+    <changeSet id="1737532202157-8" author="aleksey (generated)">
+        <dropForeignKeyConstraint baseTableName="lemma" constraintName="lemma_site_fk"/>
+    </changeSet>
+    <changeSet id="1737532202157-9" author="aleksey (generated)">
+        <dropForeignKeyConstraint baseTableName="page" constraintName="page_site_fk"/>
+    </changeSet>
+    <changeSet id="1737532202157-11" author="aleksey (generated)">
+        <dropTable cascadeConstraints="true" tableName="field"/>
+    </changeSet>
+    <changeSet id="1737532202157-12" author="aleksey (generated)">
+        <dropTable cascadeConstraints="true" tableName="index"/>
+    </changeSet>
+    <changeSet id="1737532202157-13" author="aleksey (generated)">
+        <dropTable cascadeConstraints="true" tableName="lemma"/>
+    </changeSet>
+    <changeSet id="1737532202157-14" author="aleksey (generated)">
+        <dropTable cascadeConstraints="true" tableName="page"/>
+    </changeSet>
+    <changeSet id="1737532202157-1" author="aleksey (generated)">
+        <modifyDataType columnName="last_error" newDataType="VARCHAR(255)" tableName="site"/>
+    </changeSet>
+    <changeSet id="1737532202157-2" author="aleksey (generated)">
+        <dropColumn columnName="status" tableName="site"/>
+    </changeSet>
+    <changeSet id="1737532202157-3" author="aleksey (generated)">
+        <addColumn tableName="site">
+            <column name="status" type="VARCHAR(255)">
+                <constraints nullable="false" validateNullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

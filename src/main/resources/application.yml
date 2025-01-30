@@ -1,16 +1,25 @@
-spring.datasource.url: ${DB_HOST}:${DB_PORT}/${SCHEMA_NAME}
-spring.datasource.username: ${DB_USERNAME}
-spring.datasource.password: ${DB_USER_PASSWORD}
-spring.jpa.hibernate.ddl-auto: none
-spring.jpa.properties.hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
-spring.jpa.properties.hibernate.jdbc.batch_size: 100
-spring.jpa.properties.hibernate.order_inserts: true
-spring.liquibase.change-log: classpath:/db/changelog/db.changelog-master.xml
+spring:
+  datasource:
+    url: ${DB_HOST:jdbc:postgresql}:${DB_PORT://localhost:5432}/${SCHEMA_NAME:search_engine}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_USER_PASSWORD:testtest}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 100
+        order_inserts: true
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.xml
+
+
+elasticsearch:
+  uri: ${ELASTICSEARCH_URI:localhost:9200}
 
 sites:
   - url: https://www.playback.ru
     name: Playback
-  - url: https://www.nikoartgallery.com
-    name: Nikoartgallery
 
 user-agent: HeliontSearchBot

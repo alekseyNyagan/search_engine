@@ -11,9 +11,10 @@ import main.service.SearchSystemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Tag(name = "Поисковая система", description = "Индексация сайтов и поиск")
@@ -75,7 +76,7 @@ public class ApiController {
     public ResponseEntity<AbstractResponse> search(@RequestParam @Parameter(description = "Поисковый запрос") String query,
                                                    @RequestParam(required = false) @Parameter(description = "Сайт") String site,
                                                    @RequestParam @Parameter(description = "Сдвиг для постраничного вывода") int offset,
-                                                   @RequestParam @Parameter(description = "Количество результатов, которое нужно вывести") int limit) throws IOException {
+                                                   @RequestParam @Parameter(description = "Количество результатов, которое нужно вывести") int limit) {
         return new  ResponseEntity<>(searchSystemService.search(query, site, offset, limit), HttpStatus.OK);
     }
 }
