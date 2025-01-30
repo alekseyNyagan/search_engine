@@ -32,7 +32,7 @@ public class ApiController {
     @GetMapping("/startIndexing")
     @Operation(
             summary = "Запуск индексации",
-            description = "Запускает индексацию сайтов, указанных в кофигурационном файле"
+            description = "Запускает индексацию сайтов, указанных в конфигурационном файле"
     )
     public ResponseEntity<ErrorResponse> startIndexing() {
         return new ResponseEntity<>(indexSystemService.startIndexing(), HttpStatus.OK);
@@ -41,7 +41,7 @@ public class ApiController {
     @GetMapping("/stopIndexing")
     @Operation(
             summary = "Остановка индексации",
-            description = "Останавливает индексацию сайтов, указанных в кофигурационном файле"
+            description = "Останавливает индексацию сайтов, указанных в конфигурационном файле"
     )
     public ResponseEntity<ErrorResponse> stopIndexing() {
         return new ResponseEntity<>(indexSystemService.stopIndexing(), HttpStatus.OK);
@@ -49,7 +49,7 @@ public class ApiController {
 
     @PostMapping ("/indexPage")
     @Operation(
-            summary = "Идексация отдельной страницы",
+            summary = "Индексация отдельной страницы",
             description = "Запускает индексацию страницы, переданную в качестве параметра"
     )
     public ResponseEntity<ErrorResponse> indexPage(@RequestParam @Parameter(description = "Путь страницы для индексации") String url) {
