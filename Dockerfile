@@ -1,4 +1,4 @@
-FROM openjdk:17-slim
+FROM openjdk:21-slim
 USER root
 WORKDIR /app
 ARG JAR_FILE=target/*.jar
